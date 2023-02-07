@@ -3,7 +3,6 @@ package com.socket.server.repo;
 import com.socket.server.model.ServerMessage;
 import com.socket.server.model.UserMessage;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 // 처리된 결과가 들어오면 브로드캐스팅
 @RequiredArgsConstructor
 @Service
-@Slf4j
 public class BroadcastRepository {
 
     private final SimpMessageSendingOperations messagingTemplate;
@@ -44,7 +42,6 @@ public class BroadcastRepository {
 
     // ALL_READY, AGREE_RESULT, GUILTY_RESULT, GAME_END
     public void serverMessage(ServerMessage message) {
-        log.info("serverMessage들어옴");
         messagingTemplate.convertAndSend("/sub/message/user/" + message.getRoomId(), message);
     }
 }

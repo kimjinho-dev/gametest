@@ -5,7 +5,6 @@ import com.socket.server.model.UserMessage;
 import com.socket.server.repo.BroadcastRepository;
 import com.socket.server.repo.RoomRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
@@ -17,7 +16,6 @@ import java.util.Map;
 // 유저 데이터가 들어오는곳
 @RequiredArgsConstructor
 @Controller
-@Slf4j
 public class UserDataController {
 
     private final SimpMessageSendingOperations messagingTemplate;

@@ -3,7 +3,6 @@ package com.socket.server.repo;
 import com.socket.server.model.Room;
 import com.socket.server.model.ServerMessage;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Repository;
@@ -14,7 +13,6 @@ import java.util.*;
 
 @RequiredArgsConstructor
 @Repository
-@Slf4j
 public class RoomRepository  {
 
     private Map<String, Room> chatRoomMap;
@@ -110,7 +108,6 @@ public class RoomRepository  {
     }
 
     public void setGuiltyInfo(String roomId, String userId) {
-        log.info("setGuiltyInfo 들어왔어요");
         chatRoomMap.get(roomId).getGuiltyVote().get("유죄").add(userId);
         chatRoomMap.get(roomId).setGuiltyCount(chatRoomMap.get(roomId).getGuiltyCount() + 1);
         if (chatRoomMap.get(roomId).getGuiltyCount() == 2) {
@@ -128,7 +125,6 @@ public class RoomRepository  {
     }
 
     public void setNotguiltyInfo(String roomId, String userId) {
-        log.info("setNotguiltyInfo 들어왔어요");
         chatRoomMap.get(roomId).getGuiltyVote().get("무죄").add(userId);
         chatRoomMap.get(roomId).setGuiltyCount(chatRoomMap.get(roomId).getGuiltyCount() + 1);
         if (chatRoomMap.get(roomId).getGuiltyCount() == 2) {
