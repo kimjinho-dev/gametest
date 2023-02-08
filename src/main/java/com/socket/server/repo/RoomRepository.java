@@ -1,6 +1,7 @@
 package com.socket.server.repo;
 
 import com.socket.server.model.Room;
+import com.socket.server.model.RoomDto;
 import com.socket.server.model.ServerMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -18,28 +19,34 @@ import java.util.stream.IntStream;
 public class RoomRepository  {
 
     private Map<String, Room> chatRoomMap;
-//    private final ServerMessage serverMessage = new ServerMessage();
+    private List<RoomDto> roomList;
     private final BroadcastRepository broadcastRepository;
-//    private final SimpMessageSendingOperations messagingTemplate;
 
     @PostConstruct
     private void init() {
         chatRoomMap = new LinkedHashMap<>();
     }
 
-    public List<Room> findAllRoom() {
-        // 채팅방 생성순서 최근 순으로 반환
-        List chatRooms = new ArrayList<>(chatRoomMap.values());
-        Collections.reverse(chatRooms);
-        return chatRooms;
+    public List<RoomDto> findAllRoom() {
+        roomList = new ArrayList<>();
+        for ( String key : chatRoomMap.keySet() ) {
+            RoomDto roomDto = new RoomDto();
+            roomDto.setRoomId(chatRoomMap.get(key).getRoomId());
+            roomDto.setTitle(chatRoomMap.get(key).getTitle());
+            roomDto.setUserCount(chatRoomMap.get(key).getInUsers().size());
+            roomDto.setRoomNum(chatRoomMap.get(key).getRoomNum());
+            roomDto.setLock(!chatRoomMap.get(key).getPassword().equals(""));
+            roomList.add(roomDto);
+        }
+        return roomList;
     }
 
     public Room findRoomById(String id) {
         return chatRoomMap.get(id);
     }
 
-    public Room createChatRoom(String name) {
-        Room room = Room.create(name);
+    public Room createChatRoom(String title, String password) {
+        Room room = Room.create(title,password);
         List<Integer> allRoomNums = chatRoomMap.values().stream().map(Room::getRoomNum).collect(Collectors.toList());;
         List<Integer> roomNumList = IntStream.range(1, 101)
                 .boxed()

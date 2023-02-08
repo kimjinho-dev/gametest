@@ -4,7 +4,7 @@ import com.socket.server.model.Room;
 import com.socket.server.repo.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import com.socket.server.model.RoomDto;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,28 +16,18 @@ public class RoomController {
 
         private final RoomRepository chatRoomRepository;
 
-//        @GetMapping("/room")
-//        public String rooms(Model model) {
-//            return "/chat/room";
-//        }
 
         @GetMapping("/rooms")
         @ResponseBody
-        public List<Room> room() {
+        public List<RoomDto> room() {
             return chatRoomRepository.findAllRoom();
         }
 
         @PostMapping("/room")
         @ResponseBody
-        public Room createRoom(@RequestParam String name) {
-            return chatRoomRepository.createChatRoom(name);
+        public Room createRoom(@RequestParam String title, String password) {
+            return chatRoomRepository.createChatRoom(title,password);
         }
-
-//        @GetMapping("/room/enter/{roomId}")
-//        public String roomDetail(Model model, @PathVariable String roomId) {
-//            model.addAttribute("roomId", roomId);
-//            return "/chat/roomdetail";
-//        }
 
         @GetMapping("/room/{roomId}")
         @ResponseBody

@@ -9,7 +9,7 @@ import java.util.*;
 public class Room {
 
     private String roomId;
-    private String name;
+    private String title;
     private List<String> inUsers;
     private int readyCount;
     private int agreeCount;
@@ -17,12 +17,13 @@ public class Room {
     private int guiltyCount;
     private Map<String,List<String>> guiltyVote;
     private Integer roomNum;
+    private String password;
 
 
-    public static Room create(String name) {
+    public static Room create(String title, String password) {
         Room gameRoom = new Room();
         gameRoom.roomId = UUID.randomUUID().toString();
-        gameRoom.name = name;
+        gameRoom.title = title;
         gameRoom.inUsers = new ArrayList<String>();
         gameRoom.readyCount = 0;
         gameRoom.agreeCount = 0;
@@ -33,6 +34,7 @@ public class Room {
         gameRoom.guiltyVote = new HashMap<String,List<String>>();
         gameRoom.guiltyVote.put("유죄",new ArrayList<>());
         gameRoom.guiltyVote.put("무죄",new ArrayList<>());
+        gameRoom.password = password;
         return gameRoom;
     }
 }
