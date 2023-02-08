@@ -10,6 +10,8 @@ import com.socket.server.repo.BroadcastRepository;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
 @Repository
@@ -38,7 +40,14 @@ public class RoomRepository  {
 
     public Room createChatRoom(String name) {
         Room room = Room.create(name);
-        chatRoomMap.put(room.getRoomId(), room);
+        List<Integer> allRoomNums = chatRoomMap.values().stream().map(Room::getRoomNum).collect(Collectors.toList());;
+        List<Integer> roomNumList = IntStream.range(1, 101)
+                .boxed()
+                .collect(Collectors.toList());
+        roomNumList.removeAll(allRoomNums);
+        Random rand = new Random();
+        room.setRoomNum(roomNumList.get(rand.nextInt(roomNumList.size())));
+        chatRoomMap.put(room.getRoomId(),room);
         return room;
     }
 

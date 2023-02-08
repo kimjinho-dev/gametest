@@ -16,6 +16,7 @@ public class Room {
     private Map<String,List<String>> agreeVote;
     private int guiltyCount;
     private Map<String,List<String>> guiltyVote;
+    private Integer roomNum;
 
 
     public static Room create(String name) {
