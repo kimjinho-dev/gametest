@@ -9,6 +9,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,23 +23,24 @@ public class UserDataController {
     private final RoomRepository roomRepository;
     private final BroadcastRepository broadcastRepository;
 
-    //ENTER, READY, START, QUIT, MAKE, YES, NO, GUILTY, NOTGUILTY, RESTART
+    //ENTER, READY, TALK, START, QUIT, MAKE, YES, NO, GUILTY, NOTGUILTY, RESTART
     @MessageMapping("/message/user")
     public void userMessage(UserMessage message) {
         if (UserMessage.MessageType.ENTER.equals(message.getType())) {
             roomRepository.setUserEnterInfo(message.getRoomId(), message.getSender());
-//            message.setMessage(roomRepository.getUserEnterRoomId(message.getRoomId()).toString());
-            Map<String,Integer> userDegree = new HashMap<String,Integer>();
             List<String> users = roomRepository.getUserEnterRoomId(message.getRoomId());
+            List<Map<String,String>> userDegree = new ArrayList<Map<String,String>>();
             int degree = 0;
             if (users.size() != 0) {
                 degree = 360 / users.size();
             }
             for (int i=0; i<users.size();i++) {
-                    userDegree.put(users.get(i),-180-(degree*i));
+                Map<String,String> temp = new HashMap<String, String>();
+                temp.put("id",users.get(i));
+                temp.put("rotate",String.format("%d", 180+(degree*i)));
+                userDegree.add(0,temp);
             }
-            message.setMessage(userDegree.toString());
-            broadcastRepository.userMessage(message);
+            messagingTemplate.convertAndSend("/sub/message/user/" + message.getRoomId(), userDegree);
         } else if (UserMessage.MessageType.TALK.equals(message.getType())) {
             broadcastRepository.userMessage(message);
         } else if (UserMessage.MessageType.READY.equals(message.getType())) {
@@ -48,17 +50,19 @@ public class UserDataController {
             broadcastRepository.userMessage(message);
         } else if (UserMessage.MessageType.QUIT.equals(message.getType())) {
             roomRepository.removeUserEnterInfo(message.getRoomId(), message.getSender());
-            Map<String,Integer> userDegree = new HashMap<String,Integer>();
             List<String> users = roomRepository.getUserEnterRoomId(message.getRoomId());
+            List<Map<String,String>> userDegree = new ArrayList<Map<String,String>>();
             int degree = 0;
             if (users.size() != 0) {
                 degree = 360 / users.size();
             }
             for (int i=0; i<users.size();i++) {
-                userDegree.put(users.get(i),-180-(degree*i));
+                Map<String,String> temp = new HashMap<String, String>();
+                temp.put("id",users.get(i));
+                temp.put("rotate",String.format("%d", -180-(degree*i)));
+                userDegree.add(0,temp);
             }
-            message.setMessage(userDegree.toString());
-            broadcastRepository.userMessage(message);
+            messagingTemplate.convertAndSend("/sub/message/user/" + message.getRoomId(), userDegree);
         } else if (UserMessage.MessageType.MAKE.equals(message.getType())) {
             broadcastRepository.userMessage(message);
         } else if (UserMessage.MessageType.YES.equals(message.getType())) {
